@@ -1,0 +1,64 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+	<IsPackable>false</IsPackable>
+    <SpaRoot>ClientApp\</SpaRoot>
+    <SpaProxyServerUrl>https://localhost:8084</SpaProxyServerUrl>
+    <SpaProxyLaunchCommand>npm run serve</SpaProxyLaunchCommand>
+	<ImplicitUsings>enable</ImplicitUsings>	
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Server\Controllers\AdminController.cs" />
+    <Compile Remove="Server\Controllers\HomeController.cs" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<None Remove="ClientApp\src\pages\global-components.js" />
+		<None Remove="vue.config.js" />
+	</ItemGroup>
+	
+  <ItemGroup>
+    <Content Remove="ClientApp\cypress.json" />
+    <Content Remove="ClientApp\jsconfig.json" />
+    <Content Remove="ClientApp\package-lock.json" />
+    <Content Remove="ClientApp\package.json" />
+    <Content Remove="ClientApp\public\manifest.json" />
+    <Content Remove="wwwroot\index.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="ClientApp\jsconfig.json" />
+    <None Include="ClientApp\package-lock.json" />
+    <None Include="ClientApp\package.json" />
+    <None Include="ClientApp\public\manifest.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.SwaggerUI" Version="1.0.1" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.NodeServices" Version="3.1.32" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="7.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="7.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.7" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.31.0" />
+    <PackageReference Include="VueCliMiddleware" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Models\Models.csproj" />
+    <ProjectReference Include="..\Services\Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Server\Controllers\" />
+  </ItemGroup>
+
+</Project>

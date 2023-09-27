@@ -1,0 +1,71 @@
+button {
+  outline: none;
+  height: 40px;
+  text-align: center;
+  width: 170px;
+  border-radius: 40px;
+  background: #03a9f4;;
+  border: 2px solid #03a9f4;;
+  color: #000000;;
+  letter-spacing: 1px;
+  text-shadow: 0;
+  font-size: 12px;
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  margin-top: 10px;
+}
+
+  button:hover {
+    color: white;
+    background: #03a9f4;
+  }
+
+  button:active {
+    letter-spacing: 2px;
+  }
+
+  button:after {
+    content: "Войти";
+  }
+
+.onclic {
+  width: 40px;
+  border-color: #03a9f4;
+  border-width: 4px;
+  font-size: 0;
+  border-left-color: #fff;
+  animation: rotating 0.8s 0.10s linear infinite;
+}
+
+  .onclic:after {
+    content: "";
+  }
+
+  .onclic:hover {
+    color: #1ECD97;
+    background: white;
+  }
+
+.validate {
+  font-size: 13px;
+  color: white;
+  background: #03a9f4;
+}
+
+  .validate:after {
+    font-family: 'FontAwesome';
+    content: "\f00c";
+  }
+
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
