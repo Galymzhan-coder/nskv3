@@ -29,7 +29,7 @@
             <div class="p-2">
               <!--TextEditor :tools="['code', 'link']" class="p-2 border w-full text-left resize-none" v-model="itemsEdit.description" />-->
 
-              <quill-editor v-model:value="itemsEdit.description"
+              <quill-editor v-model="content"
                             :options="state.editorOption"
                             :disabled="state.disabled"
                             @blur="onEditorBlur($event)"
@@ -72,6 +72,7 @@
   const apiService = new ApiService();
   const itemsEdit = ref(null);
   let selectedItem = ref(null);
+  let content = "";
   /*
   onMounted(async () => {
       const { data } = apiService.fetchData('CategoryIerarchyList')
@@ -153,6 +154,8 @@
   const formData = ref({ ...props.item });
 
   function saveItem() {
+
+    console.log("content = ", this.content);
     emit('save', formData.value);
   }
 
@@ -186,6 +189,19 @@
   });
   */
 
+  const uploadImage = async (file) => {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const response = await axios.post('/api/upload-image', formData);
+      return response.data.imageUrl;
+    } catch (error) {
+      console.error('Failed to upload image:', error);
+      return null;
+    }
+  }
+
 
     const state = reactive({
       dynamicComponent: null,
@@ -194,23 +210,40 @@
       editorOption: {
         placeholder: 'core',
         modules: {
-          toolbar: [
-            ['bold', 'italic', 'underline', 'strike'],
-            ['blockquote', 'code-block'],
-            [{ header: 1 }, { header: 2 }],
-            [{ list: 'ordered' }, { list: 'bullet' }],
-            [{ script: 'sub' }, { script: 'super' }],
-            [{ indent: '-1' }, { indent: '+1' }],
-            [{ direction: 'rtl' }],
-            [{ size: ['small', false, 'large', 'huge'] }],
-            [{ header: [1, 2, 3, 4, 5, 6, false] }],
-            [{ color: [] }, { background: [] }],
-            [{ font: [] }],
-            [{ align: [] }],
-            ['clean'],
-            ['link', 'image', 'video']
-          ],
-          // other moudle options here
+          toolbar: {
+            container: [
+              ['bold', 'italic', 'underline', 'strike'],
+              ['blockquote', 'code-block'],
+              [{ header: 1 }, { header: 2 }],
+              [{ list: 'ordered' }, { list: 'bullet' }],
+              [{ script: 'sub' }, { script: 'super' }],
+              [{ indent: '-1' }, { indent: '+1' }],
+              [{ direction: 'rtl' }],
+              [{ size: ['small', false, 'large', 'huge'] }],
+              [{ header: [1, 2, 3, 4, 5, 6, false] }],
+              [{ color: [] }, { background: [] }],
+              [{ font: [] }],
+              [{ align: [] }],
+              ['clean'],
+              ['link', 'image', 'video']
+            ],
+            handlers: {
+              image: () => {
+                const input = document.createElement('input');
+                input.setAttribute('type', 'file');
+                input.setAttribute('accept', 'image/*');
+                input.click();
+
+                input.onchange = async () => {
+                  const file = input.files[0];
+                  const imageUrl = await uploadImage(file);
+                  if (imageUrl) {
+                    const range = quill.getSelection();
+                    quill.insertEmbed(range.index, 'image', imageUrl);
+                  }
+                };
+              }
+          }
         }
         // more options
       },
@@ -226,7 +259,7 @@
       console.log('editor ready!', quill)
     }
     const onEditorChange = ({ quill, html, text }) => {
-      console.log('editor change!', quill, html, text)
+      console.log('editor change! quill=', quill, ", html=", html,", text=", text)
       state._content = html
     }
     /*
