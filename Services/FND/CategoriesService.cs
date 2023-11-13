@@ -50,7 +50,7 @@ namespace Services.FND
 
             string err=string.Empty;
             var lst = _odp.Routine.GetFromDatabase<CategoryDTO>(ref err, "select * from db_nsk.categories where is_active=1");
-
+            UpdateFromSql
 
             return lst.ToList();
 

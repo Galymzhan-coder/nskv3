@@ -12,7 +12,7 @@ public partial class CategoryDTO
 
     public string? Description { get; set; }
 
-    public short? IsActive { get; set; }
+    public short? is_active { get; set; }
 
     public DateTime CreateDate { get; set; }
 

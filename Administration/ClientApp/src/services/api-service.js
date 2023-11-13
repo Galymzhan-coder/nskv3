@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import axios from "axios";
 
-const host = 'http://localhost:5196/';
+const host = 'https://localhost:7153/';
 
 export default class ApiService {
   // Функция для получения данных
@@ -35,6 +35,27 @@ export default class ApiService {
       throw error;
     }
   }
+
+  // Функция для отправки данных
+  async sendFile(url, data) {
+    try {
+
+      console.log('sendFile host + url = ', host + url, ', data = ', data);
+
+      const response = await axios({
+        method: 'post',
+        url: host + url,
+        data: data,
+        //headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      
+      return response.data.imageUrl;
+    } catch (error) {
+      console.error('Failed to upload image:', error);
+      return null;
+    }
+  }
+
 }
     /*
 // Пример использования

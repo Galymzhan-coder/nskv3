@@ -59,6 +59,7 @@
 
   <ItemGroup>
     <Folder Include="Server\Controllers\" />
+    <Folder Include="wwwroot\uploaded-images\" />
   </ItemGroup>
 
 </Project>

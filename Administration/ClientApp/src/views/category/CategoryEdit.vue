@@ -24,7 +24,7 @@
             <div class="bg-gray-300 p-2 border"><label>Описание:</label></div>
             <!--<textarea v-model="itemsEdit.description" class="p-2 border w-full text-left resize-none" ></textarea>-->
             <!--RichTextEditor/-->
-            
+
 
             <div class="p-2">
               <!--TextEditor :tools="['code', 'link']" class="p-2 border w-full text-left resize-none" v-model="itemsEdit.description" />-->
@@ -39,8 +39,9 @@
 
             </div>
             <div class="p-2 border w-full text-left inline-flex items-center">
+              <label>Активность:</label> &nbsp;
               <input v-model="itemsEdit.is_active" type="checkbox" class="mr-2" />
-              <label>Активность:</label>
+
             </div>
             <div class="p-2"></div>
             <div class="p-2 w-full inline-flex items-center space-x-4">
@@ -62,17 +63,18 @@
 
   //import RichTextEditor from '../../components/RichTextEditor';
   //import TextEditor from '../../components/TextEditor';
-  import { useRouter, useRoute,  } from 'vue-router';
+  import { useRouter, useRoute, } from 'vue-router';
   import ApiService from '../../services/api-service.js';
 
   import { reactive } from 'vue'
   import { quillEditor } from 'vue3-quill'
-  
+
   const items = ref([]);
   const apiService = new ApiService();
   const itemsEdit = ref(null);
   let selectedItem = ref(null);
   let content = "";
+  let quillInstance = ref(null);
   /*
   onMounted(async () => {
       const { data } = apiService.fetchData('CategoryIerarchyList')
@@ -94,17 +96,19 @@
     try {
       const data = await apiService.fetchData('CategoryIerarchyList');
       items.value = data;
-      console.log("router=", router);
+      console.log("router=", router, ", id=", route.params.id);
       //selectedItem = ref(items.value.find(item => item.id === itemsEdit.parentId)?.title || null);
       //selectedItem = ref(items.value.map(item => item.id == itemsEdit.parentId).values);
-      
+
       let id = route.params.id;
       const editData = await apiService.fetchDataById('GetCategoryItem', id);
       itemsEdit.value = editData;
       selectedItem = items.value.find(item => item.id === editData.parent_id);
       //formItems.id = editData.id;
-      
-      console.log("selectedItem=", selectedItem, ", editData.parent_id=", editData);
+
+      itemsEdit.value.is_active = itemsEdit.value.is_active === 1 ? true : false;
+
+      console.log("selectedItem=", selectedItem, ", editData.parent_id=", editData, " , itemsEdit.value.is_active=", itemsEdit.value.is_active);
       console.log("itemsEdit=", itemsEdit);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -156,6 +160,14 @@
   function saveItem() {
 
     console.log("content = ", this.content);
+    state._content
+
+    try {
+      await apiService.sendData();
+    } catch (error) {
+
+    }
+
     emit('save', formData.value);
   }
 
@@ -163,7 +175,7 @@
     //emit('cancel');
     goToPage('/category');
   }
-  
+
   function goToPage(url) {
     router.push(url);
   }
@@ -191,11 +203,12 @@
 
   const uploadImage = async (file) => {
     const formData = new FormData();
-    formData.append('image', file);
+    formData.append('file', file);
 
     try {
-      const response = await axios.post('/api/upload-image', formData);
-      return response.data.imageUrl;
+      const response = await apiService.sendFile('upload-image', formData);//await axios.post('/api/upload-image', formData);
+      console.log('uploadImage response = ', response);
+      return response;
     } catch (error) {
       console.error('Failed to upload image:', error);
       return null;
@@ -203,69 +216,76 @@
   }
 
 
-    const state = reactive({
-      dynamicComponent: null,
-      content: '<p>Initial Content</p>',
-      _content: '',
-      editorOption: {
-        placeholder: 'core',
-        modules: {
-          toolbar: {
-            container: [
-              ['bold', 'italic', 'underline', 'strike'],
-              ['blockquote', 'code-block'],
-              [{ header: 1 }, { header: 2 }],
-              [{ list: 'ordered' }, { list: 'bullet' }],
-              [{ script: 'sub' }, { script: 'super' }],
-              [{ indent: '-1' }, { indent: '+1' }],
-              [{ direction: 'rtl' }],
-              [{ size: ['small', false, 'large', 'huge'] }],
-              [{ header: [1, 2, 3, 4, 5, 6, false] }],
-              [{ color: [] }, { background: [] }],
-              [{ font: [] }],
-              [{ align: [] }],
-              ['clean'],
-              ['link', 'image', 'video']
-            ],
-            handlers: {
-              image: () => {
-                const input = document.createElement('input');
-                input.setAttribute('type', 'file');
-                input.setAttribute('accept', 'image/*');
-                input.click();
+  const state = reactive({
+    dynamicComponent: null,
+    content: '<p>Initial Content</p>',
+    _content: '',
+    editorOption: {
+      placeholder: 'core',
+      modules: {
+        toolbar: {
+          container: [
+            ['bold', 'italic', 'underline', 'strike'],
+            ['blockquote', 'code-block'],
+            [{ header: 1 }, { header: 2 }],
+            [{ list: 'ordered' }, { list: 'bullet' }],
+            [{ script: 'sub' }, { script: 'super' }],
+            [{ indent: '-1' }, { indent: '+1' }],
+            [{ direction: 'rtl' }],
+            [{ size: ['small', false, 'large', 'huge'] }],
+            [{ header: [1, 2, 3, 4, 5, 6, false] }],
+            [{ color: [] }, { background: [] }],
+            [{ font: [] }],
+            [{ align: [] }],
+            ['clean'],
+            ['link', 'image', 'video']
+          ],
+          handlers: {
+            image: () => {
+              const input = document.createElement('input');
+              input.setAttribute('type', 'file');
+              //input.setAttribute('accept', 'image/*');
+              input.click();
+              //console.log('input = ', input);
 
-                input.onchange = async () => {
-                  const file = input.files[0];
-                  const imageUrl = await uploadImage(file);
-                  if (imageUrl) {
-                    const range = quill.getSelection();
-                    quill.insertEmbed(range.index, 'image', imageUrl);
-                  }
-                };
-              }
+              input.onchange = async () => {
+                const file = input.files[0];
+                const imageUrl = await uploadImage(file);
+                if (imageUrl) {
+                  true
+                  const range = quillInstance.value.getSelection(true);
+                  quillInstance.value.insertEmbed(range.index, 'image', imageUrl);
+                }
+              };
+            }
           }
         }
         // more options
       },
       disabled: false
-    })
-    const onEditorBlur = quill => {
-      console.log('editor blur!', quill)
     }
-    const onEditorFocus = quill => {
-      console.log('editor focus!', quill)
-    }
-    const onEditorReady = quill => {
-      console.log('editor ready!', quill)
-    }
-    const onEditorChange = ({ quill, html, text }) => {
-      console.log('editor change! quill=', quill, ", html=", html,", text=", text)
-      state._content = html
-    }
+  });
+  const onEditorBlur = quill => {
+    console.log('editor blur!', quill)
+  }
+  const onEditorFocus = quill => {
+    console.log('editor focus!', quill)
+  }
+  const onEditorReady = quill => {
+    quillInstance.value = quill;
+    console.log('editor ready!', quill)
+  }
+  const onEditorChange = ({ quill, html, text }) => {
+    
+    state._content = html;
+    itemsEdit.value.description = html;
+
+    console.log('editor change! quill=', quill, ", html=", html, ", text=", text, ", itemsEdit=", itemsEdit);
+  }
     /*
-    setTimeout(() => {
-      state.disabled = true
-    }, 2000)*/
+  setTimeout(() => {
+    state.disabled = true
+  }, 2000)*/
 
 
 </script>

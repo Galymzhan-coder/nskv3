@@ -12,9 +12,10 @@ export default {
       commit('SET_ANIMATE_CLICKED', true)
 
       const user = await axios.post(
-        `http://localhost:5196/Authenticate`,
+        `https://localhost:7153/Authenticate`,
         postData,
       )
+
       if (user.status === 200) {
         commit('SET_AUTH', true)
         commit('SET_USER', user)
