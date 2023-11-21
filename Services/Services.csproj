@@ -9,8 +9,6 @@
   <ItemGroup>
     <Folder Include="Interfaces\" />
     <ProjectReference Include="..\Models\Models.csproj" />
-	
-	<Folder Include="DTO\" />
   </ItemGroup>
 
   <ItemGroup>

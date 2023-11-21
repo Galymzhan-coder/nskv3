@@ -8,6 +8,7 @@ using Models.FFIFND;
 using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Services.FND.Interfaces;
+using Services.Utils;
 
 namespace Services.FND
 {
@@ -33,9 +34,9 @@ namespace Services.FND
 
         }
 
-        public void update(int id) 
-        { 
-        
+        public void update(int id, CategoryDTO category) 
+        {
+            string sql = SqlCommandBuilder.BuildUpdateCommand<CategoryDTO>(id, category);
         }
 
         public void delete(int id)

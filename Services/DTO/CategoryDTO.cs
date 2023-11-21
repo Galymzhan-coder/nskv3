@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Services.DTO.Interfaces;
+
 
 namespace Services.DTO
 {
-    public class CategoryDTO
+    public class CategoryDTO:IDto
     {
         public int Id { get; set; }
 
