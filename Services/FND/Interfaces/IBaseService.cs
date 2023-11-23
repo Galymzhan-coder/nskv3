@@ -10,7 +10,7 @@ namespace Services.FND.Interfaces
     {
         public List<T> Index();
         public void create();
-        public void update(int id);
+        public void update(int id,T dto);
         public void delete(int id);
     }
 }

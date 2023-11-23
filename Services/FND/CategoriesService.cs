@@ -15,6 +15,7 @@ namespace Services.FND
     public class CategoriesService:ICategoriesService
     {
         private ODDANP _odp;
+        private string error ;
         public CategoriesService(ODDANP odp) 
         { 
             _odp = odp;
@@ -37,6 +38,8 @@ namespace Services.FND
         public void update(int id, CategoryDTO category) 
         {
             string sql = SqlCommandBuilder.BuildUpdateCommand<CategoryDTO>(id, category);
+
+            _odp.Routine.UpdateFromSql( sql, ref error);
         }
 
         public void delete(int id)
@@ -51,7 +54,7 @@ namespace Services.FND
 
             string err=string.Empty;
             var lst = _odp.Routine.GetFromDatabase<CategoryDTO>(ref err, "select * from db_nsk.categories where is_active=1");
-            UpdateFromSql
+            
 
             return lst.ToList();
 

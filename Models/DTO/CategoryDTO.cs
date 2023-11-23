@@ -1,6 +1,8 @@
-﻿namespace Models.DTO;
+﻿using Services.DTO.Interfaces;
 
-public partial class CategoryDTO
+namespace Models.DTO;
+
+public partial class CategoryDTO:IDto
 {
     public int Id { get; set; }
 
