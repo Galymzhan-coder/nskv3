@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Services.FND.Interfaces
 {
-    public interface ICategoriesService : IBaseService<CategoryDTO>
+    public interface ICategoriesService 
     {
         public List<CategoryDTO> getCategoryHierarchyLst();
 

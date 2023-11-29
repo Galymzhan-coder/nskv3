@@ -1,4 +1,4 @@
-﻿using Services.DTO.Interfaces;
+﻿using Models.DTO.Interfaces;
 
 namespace Models.DTO;
 

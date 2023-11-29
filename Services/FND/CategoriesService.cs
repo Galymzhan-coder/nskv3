@@ -9,10 +9,11 @@ using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Services.FND.Interfaces;
 using Services.Utils;
+using Models.DTO.Interfaces;
 
 namespace Services.FND
 {
-    public class CategoriesService:ICategoriesService
+    public class CategoriesService:ICategoriesService, IBaseService
     {
         private ODDANP _odp;
         private string error ;
@@ -21,11 +22,12 @@ namespace Services.FND
             _odp = odp;
         }
 
-        public List<CategoryDTO> Index() 
+        public IEnumerable<IDto> Index() 
         {
             string err = string.Empty;
-            var lst = _odp.Routine.GetFromDatabase<CategoryDTO>(ref err, "select * from db_nsk.categories where is_active=1");
-
+            //var lst = _odp.Routine.GetFromDatabase<CategoryDTO>(ref err, "select * from db_nsk.categories where is_active=1");
+            var sql = SqlCommandBuilder.BuildSelectCommand<CategoryDTO>("categories", "is_active=1");
+            var lst = _odp.Routine.GetFromDatabase<CategoryDTO>(ref err, sql);
 
             return lst.ToList();
         }
@@ -35,8 +37,12 @@ namespace Services.FND
 
         }
 
-        public void update(int id, CategoryDTO category) 
+        public void update(int id, IDto dto) 
         {
+            var category = dto as CategoryDTO;
+            if (category == null)
+                return;
+
             string sql = SqlCommandBuilder.BuildUpdateCommand<CategoryDTO>(id, category);
 
             _odp.Routine.UpdateFromSql( sql, ref error);

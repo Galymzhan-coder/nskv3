@@ -64,7 +64,9 @@
   */
     onMounted(async () => {
       try {
-        const data = await apiService.fetchData('Index');
+        //const data = await apiService.fetchData('Index');
+        const data = await apiService.fetchDataByType('IndexCommon','categories');
+        
         items.value = data;
       } catch (error) {
         console.error('Error fetching data:', error);

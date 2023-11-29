@@ -161,13 +161,13 @@
 
     console.log("content = ", this.content);
     state._content
-
+    /*
     try {
-      await apiService.sendData();
+      //await apiService.sendData();
     } catch (error) {
 
     }
-
+    */
     emit('save', formData.value);
   }
 

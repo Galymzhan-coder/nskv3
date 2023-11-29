@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Services.DTO.Interfaces
+namespace Models.DTO.Interfaces
 {
     public interface IDto
     {

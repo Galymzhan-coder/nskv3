@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using Models.Entities;
 using Models.FFIFND;
 using Services.FND;
+using Services.FND.Interfaces;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Diagnostics;
 
@@ -26,6 +27,7 @@ builder.Services.AddControllersWithViews();
 //builder.Services.AddDbContext<DbNskContext>();
 builder.Services.AddScoped<IUserInterface, UserServices>();
 builder.Services.AddScoped<ODDANP>();
+builder.Services.AddScoped<ICategoriesService, CategoriesService>();
 builder.Services.AddScoped<CategoriesService>();
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 builder.Services.AddCors(options =>

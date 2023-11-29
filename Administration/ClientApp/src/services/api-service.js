@@ -56,6 +56,16 @@ export default class ApiService {
     }
   }
 
+  async fetchDataByType(url, type) {
+    try {
+      const responce = await axios.get(host + url, { params: { type: type } });
+      return responce.data;
+    } catch (error) {
+      console.error('Error fetching data by type:', error);
+      throw error;
+    }
+  }
+
 }
     /*
 // Пример использования
