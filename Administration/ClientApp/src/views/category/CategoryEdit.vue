@@ -22,12 +22,9 @@
             <input v-model="itemsEdit.sefname" type="text" class="p-2 border w-full text-left" />
 
             <div class="bg-gray-300 p-2 border"><label>Описание:</label></div>
-            <!--<textarea v-model="itemsEdit.description" class="p-2 border w-full text-left resize-none" ></textarea>-->
-            <!--RichTextEditor/-->
 
 
             <div class="p-2">
-              <!--TextEditor :tools="['code', 'link']" class="p-2 border w-full text-left resize-none" v-model="itemsEdit.description" />-->
 
               <quill-editor v-model="content"
                             :options="state.editorOption"
@@ -59,10 +56,8 @@
 </template>
 
 <script setup>
-  import { ref, defineProps, defineEmits, onMounted, watch/*, computed*/ } from 'vue';
+  import { ref, defineProps, defineEmits, onMounted, watch } from 'vue';
 
-  //import RichTextEditor from '../../components/RichTextEditor';
-  //import TextEditor from '../../components/TextEditor';
   import { useRouter, useRoute, } from 'vue-router';
   import ApiService from '../../services/api-service.js';
 
@@ -75,19 +70,6 @@
   let selectedItem = ref(null);
   let content = "";
   let quillInstance = ref(null);
-  /*
-  onMounted(async () => {
-      const { data } = apiService.fetchData('CategoryIerarchyList')
-      .then(data => {
-        console.log('Fetched data:', data);
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-
-      this.items = data;
-  });
-  */
 
   const router = useRouter();
   const route = useRoute();
@@ -96,110 +78,52 @@
     try {
       const data = await apiService.fetchData('CategoryIerarchyList');
       items.value = data;
-      console.log("router=", router, ", id=", route.params.id);
-      //selectedItem = ref(items.value.find(item => item.id === itemsEdit.parentId)?.title || null);
-      //selectedItem = ref(items.value.map(item => item.id == itemsEdit.parentId).values);
 
       let id = route.params.id;
-      const editData = await apiService.fetchDataById('GetCategoryItem', id);
+      const editData = await apiService.fetchDataByTypeId('GetItem', 'categories' , id);
       itemsEdit.value = editData;
       selectedItem = items.value.find(item => item.id === editData.parent_id);
-      //formItems.id = editData.id;
 
       itemsEdit.value.is_active = itemsEdit.value.is_active === 1 ? true : false;
 
-      console.log("selectedItem=", selectedItem, ", editData.parent_id=", editData, " , itemsEdit.value.is_active=", itemsEdit.value.is_active);
-      console.log("itemsEdit=", itemsEdit);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   });
-  /*
-  const descriptionValue = computed(() => itemsEdit && itemsEdit.description);
-  const description = computed({
-    get: () => itemsEdit && itemsEdit.description,
-    set: (value) => {
-      if (itemsEdit) {
-        itemsEdit.description = value;
-      }
-    },
-  });
-  /*
-  selectedItem = computed(() => {
-    const item = items.value.find(item => item.id === itemsEdit.value.parent_id);
-    return item ? item : null;
-  });
-  */
-  //const selectedItem = ref(items.value.find(item => item.id === itemsEdit.parentId)?.title || null);
 
   watch(selectedItem, (newValue) => {
-    // newValue содержит новое выбранное значение
-    formData.value.parentId = newValue; // Предполагается, что у formData есть свойство parentId, измените это на ваше актуальное свойство
+    formData.value.parent_id = newValue; 
   });
-  /*
-  const formItems = {
-        id: 0,
-        parentId: null,
-        title: "",
-        sefname: "",
-        description: "",
-        isActive: null,
-        createDate: "",
-        updateDate: "",
-        root: 0,
-        lft: 0,
-        rgt: 0,
-        level: 0
-  };
-  */
+  
   const props = defineProps(['item']);
   const emit = defineEmits(['save', 'cancel']);
 
   const formData = ref({ ...props.item });
 
-  function saveItem() {
+  async function saveItem() {
 
-    console.log("content = ", this.content);
-    state._content
-    /*
+
+    console.log('this.itemsEdit =', this.itemsEdit);
+
     try {
-      //await apiService.sendData();
-    } catch (error) {
+      let id = route.params.id;
+      const postData = { type: 'categories', id: id, dto: this.itemsEdit };
+      await apiService.sendData('Update', postData);
 
+    } catch (error) {
+      console.log("saveItem error = ", error);
     }
-    */
+    
     emit('save', formData.value);
   }
 
   function cancel() {
-    //emit('cancel');
     goToPage('/category');
   }
 
   function goToPage(url) {
     router.push(url);
   }
-  /*
-  onMounted(async () => {
-    try {
-      const data = await apiService.fetchData('Index');
-      items.value = data;
-      var id = this.$route.params.id;
-      console.log('id=',id);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  });
-
-  onMounted(async () => {
-    try {
-      const data = await apiService.fetchData('GetCategoryItem');
-      items.value = data;
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  });
-  */
 
   const uploadImage = async (file) => {
     const formData = new FormData();
@@ -244,9 +168,7 @@
             image: () => {
               const input = document.createElement('input');
               input.setAttribute('type', 'file');
-              //input.setAttribute('accept', 'image/*');
               input.click();
-              //console.log('input = ', input);
 
               input.onchange = async () => {
                 const file = input.files[0];
@@ -260,7 +182,6 @@
             }
           }
         }
-        // more options
       },
       disabled: false
     }
@@ -280,18 +201,13 @@
     state._content = html;
     itemsEdit.value.description = html;
 
-    console.log('editor change! quill=', quill, ", html=", html, ", text=", text, ", itemsEdit=", itemsEdit);
-  }
-    /*
-  setTimeout(() => {
-    state.disabled = true
-  }, 2000)*/
+ }
 
 
 </script>
 
 <style>
-  /* Стили для модального окна (пример) */
+  /* Стили для модального окна */
   .modal {
     position: fixed;
     top: 0;

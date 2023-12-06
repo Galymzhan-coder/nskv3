@@ -16,9 +16,9 @@ public partial class CategoryDTO:IDto
 
     public short? is_active { get; set; }
 
-    public DateTime CreateDate { get; set; }
+    public DateTime Create_Date { get; set; }
 
-    public DateTime UpdateDate { get; set; }
+    public DateTime Update_Date { get; set; }
 
     public uint? Root { get; set; }
 

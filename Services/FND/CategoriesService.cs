@@ -1,12 +1,5 @@
 ﻿using Models.DTO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Models.FFIFND;
-using System.Net.Http;
-using Microsoft.AspNetCore.Http;
 using Services.FND.Interfaces;
 using Services.Utils;
 using Models.DTO.Interfaces;
@@ -25,8 +18,7 @@ namespace Services.FND
         public IEnumerable<IDto> Index() 
         {
             string err = string.Empty;
-            //var lst = _odp.Routine.GetFromDatabase<CategoryDTO>(ref err, "select * from db_nsk.categories where is_active=1");
-            var sql = SqlCommandBuilder.BuildSelectCommand<CategoryDTO>("categories", "is_active=1");
+            var sql = SqlCommandBuilder.BuildSelectCommand<CategoryDTO>("db_nsk.categories", "is_active=1");
             var lst = _odp.Routine.GetFromDatabase<CategoryDTO>(ref err, sql);
 
             return lst.ToList();
@@ -55,12 +47,12 @@ namespace Services.FND
 
         public List<CategoryDTO> getCategoryHierarchyLst() 
         {
-            //ODDANP odp = new ODDANP(new NPRoutine());
-            //var yourClass = HttpContext.RequestServices.GetService<NPRoutine>();
 
-            string err=string.Empty;
-            var lst = _odp.Routine.GetFromDatabase<CategoryDTO>(ref err, "select * from db_nsk.categories where is_active=1");
-            
+            string err = string.Empty;
+
+            var sql = SqlCommandBuilder.BuildSelectCommand<CategoryDTO>("db_nsk.categories", "is_active=1");
+
+            var lst = _odp.Routine.GetFromDatabase<CategoryDTO>(ref err, sql);
 
             return lst.ToList();
 
@@ -68,15 +60,28 @@ namespace Services.FND
 
         public CategoryDTO? getCategoryItem(int id)
         {
-            //ODDANP odp = new ODDANP(new NPRoutine());
-            //var yourClass = HttpContext.RequestServices.GetService<NPRoutine>();
 
             string err = string.Empty;
-            var item = _odp.Routine.GetFromDatabase<CategoryDTO>(ref err, $"select * from db_nsk.categories where is_active=1 and id={id}").FirstOrDefault();
-
+ 
+            var sql = SqlCommandBuilder.BuildSelectCommand<CategoryDTO>("db_nsk.categories", $"is_active=1 and id={id}");
+            
+            var item = _odp.Routine.GetFromDatabase<CategoryDTO>(ref err, sql).FirstOrDefault();
 
             return item;
 
         }
+       
+        public IDto? getItem(int id)
+        {
+             string err = string.Empty;
+
+            var sql = SqlCommandBuilder.BuildSelectCommand<CategoryDTO>("db_nsk.categories", $"is_active=1 and id={id}");
+
+            var item = _odp.Routine.GetFromDatabase<CategoryDTO>(ref err, sql).FirstOrDefault();
+
+            return item;
+
+        }
+
     }
 }

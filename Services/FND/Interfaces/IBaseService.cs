@@ -13,5 +13,6 @@ namespace Services.FND.Interfaces
         public void create();
         public void update(int id, IDto dto);
         public void delete(int id);
+        public IDto? getItem(int id);
     }
 }

@@ -46,7 +46,6 @@ export default class ApiService {
         method: 'post',
         url: host + url,
         data: data,
-        //headers: { 'Content-Type': 'multipart/form-data' },
       });
       
       return response.data.imageUrl;
@@ -66,28 +65,14 @@ export default class ApiService {
     }
   }
 
-}
-    /*
-// Пример использования
-const apiUrl = 'https://api.example.com/data';
-
-// Получение данных
-fetchData(apiUrl)
-  .then(data => {
-    console.log('Fetched data:', data);
-  })
-  .catch(error => {
-    console.error('Error:', error);
-  });
-
-// Отправка данных
-const postData = { key: 'value' };
-sendData(apiUrl, postData)
-  .then(response => {
-    console.log('Response:', response);
-  })
-  .catch(error => {
-    console.error('Error:', error);
-  });
-*/
+  async fetchDataByTypeId(url, type, id) {
+    try {
+      const responce = await axios.get(host + url, { params: { type: type, id: id } });
+      return responce.data;
+    } catch (error) {
+      console.error('Error fetching data by id:', error);
+      throw error;
+    }
+  }
+  
 

@@ -13,7 +13,6 @@ namespace Services.FND
         public List<UserDTO> Index()
         {
             ODDANP odp = new ODDANP();
-            //var yourClass = HttpContext.RequestServices.GetService<NPRoutine>();
 
             string err = string.Empty;
             var lst = odp.Routine.GetFromDatabase<UserDTO>(ref err, "select * from db_nsk.users where is_active=1");
@@ -25,7 +24,6 @@ namespace Services.FND
         public UserDTO GetUserByParam(string username)
         {
             ODDANP odp = new ODDANP();
-            //var yourClass = HttpContext.RequestServices.GetService<NPRoutine>();
 
             string err = string.Empty;
             var usr = odp.Routine.GetFromDatabase<UserDTO>(ref err, "select * from db_nsk.users where username='"+ username+"'").SingleOrDefault();

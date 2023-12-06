@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Models.DTO;
 using Models.DTO.Interfaces;
 using Services.FND;
-using Services.FND.Abstract;
 using Services.FND.Interfaces;
 
 namespace Administration.Controllers
@@ -14,16 +12,9 @@ namespace Administration.Controllers
 
         private readonly Dictionary<string, Type> _serviceTypes = new Dictionary<string, Type>
         {
-            { "categories", typeof(ICategoriesService) },
-            // Добавьте здесь другие маппинги
+            { "categories", typeof(ICategoriesService) }
         };
 
-        /*
-        public AdminController(CategoriesService categoriesService)
-        {
-            _categoriesService = categoriesService;
-        }
-        */
         public AdminController(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
@@ -39,15 +30,26 @@ namespace Administration.Controllers
         [HttpGet("CategoryIerarchyList"), ApiVersion("1")]
         public IActionResult GetCategoryIerarchyList()
         {
-            var lst = _categoriesService.getCategoryHierarchyLst();
 
-            return Ok(lst);
+           var service = _serviceProvider.GetService(typeof(ICategoriesService)) as ICategoriesService;
+
+
+                if (service != null)
+                {
+                    var lst = service != null ? service.getCategoryHierarchyLst() : null;
+                   
+                    return Ok(lst);
+                }
+
+            return BadRequest("GetCategoryIerarchyList: Некорректный тип сервиса: ICategoriesService");
+
         }
 
         [HttpGet("GetCategoryItem"), ApiVersion("1")]
         public IActionResult GetCategoryItem(int id)
         {
             var item = _categoriesService.getCategoryItem(id);
+
             return Ok(item);
         }
 
@@ -57,32 +59,12 @@ namespace Administration.Controllers
             if (_serviceTypes.TryGetValue(type.ToLower(), out var serviceType))
             {
                 var service = _serviceProvider.GetService(serviceType) as IBaseService;
-                //var service = _serviceProvider.GetService(typeof(ICategoriesService)) as IBaseService<IDto>;
-                var service1 = _serviceProvider.GetService(typeof(ICategoriesService)) as ICategoriesService;
-                var service2 = _serviceProvider.GetService(typeof(CategoriesService)) as CategoriesService;
-                var service3 = _serviceProvider.GetService(serviceType);
-                var service4 = _serviceProvider.GetService(typeof(CategoriesService));
 
-                //var lst = service != null ? service.Index() : null;
-                //var lst1 = service1 != null ? service1.Index(): null;
-                var lst2 = service2 != null ? service2.Index() : null;
-                //var lst3 = service3 != null ? service3.Index() : null;
-                //var lst4 = service4 != null ? service4.Index() : null;
 
                 if (service != null)
                 {
                     var lst = service != null ? service.Index() : null;
-                    /*
-                    var method = serviceType.GetMethod("Index");
-                    if (method != null)
-                    {
-                        var result = method.Invoke(service, null);
-                        return Ok(result);
-                    }
-                    else
-                    {
-                        return NotFound("Метод 'Index' не найден.");
-                    }*/
+                    
                     return Ok(lst);
                 }
 
@@ -91,6 +73,46 @@ namespace Administration.Controllers
 
             return BadRequest($"Некорректный тип сервиса: {type}");
 
+        }
+
+
+        [HttpGet("GetItem"), ApiVersion("1")]
+        public IActionResult GetItem(string type, int id)
+        {
+            if (_serviceTypes.TryGetValue(type.ToLower(), out var serviceType))
+            {
+                var service = _serviceProvider.GetService(serviceType) as IBaseService;
+
+                if (service != null)
+                {
+                    var item = service != null ? service.getItem(id) : null;
+
+                    return Ok(item);
+                }
+
+                return NotFound($"Сервис для типа '{type}' не найден");
+            }
+
+            return BadRequest($"Некорректный тип сервиса: {type}");
+        }
+
+        [HttpPut("Update")]
+        public IActionResult Update(string type, int id, [FromBody] IDto dto)
+        {
+            if (_serviceTypes.TryGetValue(type.ToLower(), out var serviceType))
+            {
+                var service = _serviceProvider.GetService(serviceType) as IBaseService;
+
+                if (service != null)
+                {
+                    service.update(id, dto);
+                    return Ok();
+                }
+
+                return NotFound($"Сервис для типа '{type}' не найден");
+            }
+
+            return BadRequest($"Некорректный тип сервиса: {type}");
         }
     }
 }
